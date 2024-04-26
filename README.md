@@ -42,6 +42,29 @@ bun run server
 bun run client
 ```
 
+## [Single-file executable](https://bun.sh/docs/bundler/executables)
+
+- Building Server
+```
+bun build --compile --minify ./src/server.ts --outfile server
+```
+
+- Building Client
+```
+bun build --compile --minify ./src/client.ts --outfile client
+```
+
+- Building all
+```
+bun run build
+```
+
+- Executing binaries
+```
+./server
+./client
+```
+
 
 ## License
 

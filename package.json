@@ -8,7 +8,10 @@
 		"client": "bun src/client.ts",
 		"format": "prettier --write \"src/**/*.ts\"",
 		"lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-		"husky": "husky install"
+		"husky": "husky install",
+		"build": "bun build --compile --minify ./src/server.ts --outfile server && bun build --compile --minify ./src/client.ts --outfile client",
+		"prod:server": "./server",
+		"prod:client": "./client"
 	},
 	"dependencies": {
 		"body-parser": "^1.20.2",
