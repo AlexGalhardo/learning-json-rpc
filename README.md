@@ -14,6 +14,9 @@
   - [Express REST API](https://expressjs.com/)
   - [Bun](https://bun.sh/)
   - [JWT](https://jwt.io/)
+  - [MongoDB](https://www.mongodb.com/)
+  - [PrismaORM](https://www.prisma.io/)
+  - [MongoAtlas](https://www.mongodb.com/cloud/atlas/register)
 
 ## Development Setup Local
 
@@ -31,13 +34,22 @@ bun install
 ```
 cp .env.example .env
 ```
+- Dont forget to setup your MongoDB credentials in .env
 
-4. Up JSON-RPC server
+4. Setup Prisma ORM
+```
+bun prisma generate
+```
+```
+bun prisma db push
+```
+
+5. Up JSON-RPC server
 ```
 bun run server
 ```
 
-5. Run client request
+6. Run client requests
 ```
 bun run client
 ```
@@ -62,9 +74,11 @@ bun run build
 - Executing binaries
 ```
 ./server
-./client
 ```
 
+```
+./client
+```
 
 ## License
 
