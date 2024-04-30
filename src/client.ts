@@ -37,7 +37,7 @@ const clientLogin = new JSONRPCClient(async (jsonRPCRequest: JSONRPCRequest, { j
 });
 
 clientLogin
-    .timeout(30 * 1000, createTimeoutJSONRPCErrorResponse)
+    .timeout(20 * 1000, createTimeoutJSONRPCErrorResponse)
     .request(
         "login",
         {
@@ -62,7 +62,7 @@ const clientSignup = new JSONRPCClient(async (jsonRPCRequest: JSONRPCRequest) =>
             body: JSON.stringify(jsonRPCRequest),
         });
 
-        if (response.status === 201) {
+        if (response.status === 200) {
             const jsonRPCResponse = await response.json();
             if (!jsonRPCResponse?.jsonrpc || !jsonRPCResponse?.id) throw new Error("Invalid JSON-RPC response");
             return clientSignup.receive(jsonRPCResponse);
@@ -75,7 +75,7 @@ const clientSignup = new JSONRPCClient(async (jsonRPCRequest: JSONRPCRequest) =>
 });
 
 // clientSignup
-// 	.timeout(10 * 1000, createTimeoutJSONRPCErrorResponse)
+// 	.timeout(20 * 1000, createTimeoutJSONRPCErrorResponse)
 // 	.request("signup", { name: 'testando user', email: 'pedrinho@gmail.com', password: 'passwordqweBR@123' })
 // 	.then((result) => console.log(result))
 // 	.catch((error) => console.error("Error: ", error));
