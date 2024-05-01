@@ -25,7 +25,7 @@ export default class AuthController {
 
             let { name, email, password } = signupPayload;
 
-            const emailAlreadyRegistred = await prisma.user.findUnique({ where: { email } });
+            const emailAlreadyRegistred = await prisma.users.findUnique({ where: { email } });
 
             if (emailAlreadyRegistred) return { success: false, message: "Email already registred!" };
 
@@ -33,12 +33,14 @@ export default class AuthController {
 
             const jwt_token = JwtToken.create(email);
 
-            const user = await prisma.user.create({ data: { name, email, password, jwt_token } });
+            await prisma.$transaction(async (trx) => {
+                const user = await trx.users.create({ data: { name, email, password, jwt_token } });
 
-            return {
-                success: true,
-                user,
-            };
+                return {
+                    success: true,
+                    user,
+                };
+            });
         } catch (error) {
             return {
                 success: false,
@@ -51,7 +53,7 @@ export default class AuthController {
         try {
             const { email, password } = loginPayload;
 
-            const user = await prisma.user.findUnique({ where: { email } });
+            const user = await prisma.users.findUnique({ where: { email } });
 
             if (!user) return { success: false, message: "Email and/or password invalid!" };
 
