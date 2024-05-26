@@ -1,0 +1,13 @@
+POST http://localhost:4444/signup
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "method": "signup",
+  "params": {
+    "name": "alex",
+	"email": "email_tes@gmail.com",
+	"password": "passwordtesteBR@123"
+  },
+  "id": 1
+}

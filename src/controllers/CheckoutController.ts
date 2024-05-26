@@ -1,12 +1,13 @@
 import { randomUUID } from "node:crypto";
-import { prisma } from "../config/prisma";
-import { faker } from '@faker-js/faker'
+import { faker } from "@faker-js/faker";
+import { CheckoutLog, Product } from "src/config/mongoose";
 
 export interface CheckoutControllerResponse {
     success: boolean;
     product?: any;
     message?: string;
 }
+
 interface CheckoutPayload {
     product_id: string;
 }
@@ -14,42 +15,34 @@ interface CheckoutPayload {
 export default class CheckoutController {
     static async checkout(checkoutPayload: CheckoutPayload): Promise<CheckoutControllerResponse> {
         try {
-            const { product_id } = checkoutPayload;
+            const product = await Product.findOneAndUpdate(
+                {
+                    product_id: Bun.env.DEFAULT_PRODUCT_ID,
+                    stock: { $gt: 0 },
+                },
+                {
+                    $inc: { stock: -1 },
+                },
+            );
 
-            const productExists = await prisma.products.findUnique({ where: { id: product_id } });
+            if (!product) throw new Error("Product not found or out of stock");
 
-            if (!productExists) return { success: false, message: "Product not exists" };
+            await CheckoutLog.create([
+                {
+                    user_id: randomUUID(),
+                    user_email: faker.internet.email(),
+                    product_id: Bun.env.DEFAULT_PRODUCT_ID,
+                    product_sku: randomUUID(),
+                    created_at: new Date(),
+                },
+            ]);
 
-			let product = null
-            await prisma.$transaction(async (trx) => {
-                product = await trx.products.update({
-                    where: {
-                        id: product_id,
-                        stock: {
-                            gt: 0,
-                        },
-                    },
-                    data: {
-                        stock: {
-                            decrement: 1,
-                        },
-                    },
-                });
-
-				await trx.checkoutLogs.create({
-					data: {
-						user_id: randomUUID(),
-						user_email: faker.internet.email(),
-						product_id: process.env.PRODUCT_ID,
-						product_sku: randomUUID()
-					}
-				})
-            });
-			return {
-				success: true,
-				product,
-			};
+            return {
+                success: true,
+                product,
+            };
         } catch (error) {
+            console.error(error);
             return {
                 success: false,
                 message: error.message,

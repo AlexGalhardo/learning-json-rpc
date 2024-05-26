@@ -6,7 +6,7 @@ import CheckoutController, { CheckoutControllerResponse } from "src/controllers/
 type Methods = {
     signup(params: { name: string; email: string; password: string }): AuthControllerResponse;
     login(params: { email: string; password: string }): AuthControllerResponse;
-	checkout(params: { product_id: string }): CheckoutControllerResponse;
+    checkout(params: { product_id: string }): CheckoutControllerResponse;
 };
 
 const jsonRPCServer: TypedJSONRPCServer<Methods> = new JSONRPCServer({
@@ -15,7 +15,7 @@ const jsonRPCServer: TypedJSONRPCServer<Methods> = new JSONRPCServer({
     },
 });
 
-jsonRPCServer.applyMiddleware(logMiddleware, exceptionMiddleware);
+// jsonRPCServer.applyMiddleware(logMiddleware, exceptionMiddleware);
 
 jsonRPCServer.addMethod("signup", async ({ name, email, password }) =>
     AuthController.signup({ name, email, password }),

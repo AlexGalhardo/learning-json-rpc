@@ -1,40 +1,39 @@
 import {
-	JSONRPCClient,
-	JSONRPCID,
-	JSONRPCErrorResponse,
-	createJSONRPCErrorResponse,
-	JSONRPCRequest,
+    JSONRPCClient,
+    JSONRPCID,
+    JSONRPCErrorResponse,
+    createJSONRPCErrorResponse,
+    JSONRPCRequest,
 } from "json-rpc-2.0";
-import "dotenv/config";
 import JwtToken from "./utils/JwtToken";
 import { generateRandomEmail, generateRandomFullName } from "./utils/generate";
 
 const createTimeoutJSONRPCErrorResponse = (id: JSONRPCID): JSONRPCErrorResponse =>
-	createJSONRPCErrorResponse(id, 400, "Request timed out after 10s");
+    createJSONRPCErrorResponse(id, 400, "Request timed out after 10s");
 
 const clientLogin = new JSONRPCClient(async (jsonRPCRequest: JSONRPCRequest, { jwt_token }: { jwt_token: string }) => {
-	try {
-		const response = await fetch("http://localhost:4444/login", {
-			method: "POST",
-			headers: {
-				"content-type": "application/json",
-				authorization: `Bearer ${jwt_token}`,
-			},
-			body: JSON.stringify(jsonRPCRequest),
-		});
+    try {
+        const response = await fetch("http://localhost:4444/login", {
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+                authorization: `Bearer ${jwt_token}`,
+            },
+            body: JSON.stringify(jsonRPCRequest),
+        });
 
-		if (response.status === 200) {
-			const jsonRPCResponse = await response.json();
-			if (!jsonRPCResponse?.jsonrpc || !jsonRPCResponse?.id) {
-				throw new Error("Invalid JSON-RPC response");
-			}
-			return clientLogin.receive(jsonRPCResponse);
-		} else if (jsonRPCRequest.id !== undefined) {
-			throw new Error(response.statusText);
-		}
-	} catch (error) {
-		throw new Error(error.message);
-	}
+        if (response.status === 200) {
+            const jsonRPCResponse = await response.json();
+            if (!jsonRPCResponse?.jsonrpc || !jsonRPCResponse?.id) {
+                throw new Error("Invalid JSON-RPC response");
+            }
+            return clientLogin.receive(jsonRPCResponse);
+        } else if (jsonRPCRequest.id !== undefined) {
+            throw new Error(response.statusText);
+        }
+    } catch (error) {
+        throw new Error(error.message);
+    }
 });
 
 // clientLogin
@@ -54,25 +53,25 @@ const clientLogin = new JSONRPCClient(async (jsonRPCRequest: JSONRPCRequest, { j
 //     .catch((error) => console.error("Error: ", error));
 
 const clientSignup = new JSONRPCClient(async (jsonRPCRequest: JSONRPCRequest) => {
-	try {
-		const response = await fetch("http://localhost:4444/signup", {
-			method: "POST",
-			headers: {
-				"content-type": "application/json",
-			},
-			body: JSON.stringify(jsonRPCRequest),
-		});
+    try {
+        const response = await fetch("http://localhost:4444/signup", {
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+            },
+            body: JSON.stringify(jsonRPCRequest),
+        });
 
-		if (response.status === 200) {
-			const jsonRPCResponse = await response.json();
-			// if (!jsonRPCResponse?.jsonrpc || !jsonRPCResponse?.id) throw new Error("Invalid JSON-RPC response");
-			return clientSignup.receive(jsonRPCResponse);
-		} else if (jsonRPCRequest.id !== undefined) {
-			throw new Error(response.statusText);
-		}
-	} catch (error) {
-		throw new Error(error.message);
-	}
+        if (response.status === 200) {
+            const jsonRPCResponse = await response.json();
+            // if (!jsonRPCResponse?.jsonrpc || !jsonRPCResponse?.id) throw new Error("Invalid JSON-RPC response");
+            return clientSignup.receive(jsonRPCResponse);
+        } else if (jsonRPCRequest.id !== undefined) {
+            throw new Error(response.statusText);
+        }
+    } catch (error) {
+        throw new Error(error.message);
+    }
 });
 
 // clientSignup
@@ -90,31 +89,35 @@ const clientSignup = new JSONRPCClient(async (jsonRPCRequest: JSONRPCRequest) =>
 // }
 
 const clientCheckout = new JSONRPCClient(async (jsonRPCRequest: JSONRPCRequest) => {
-	try {
-		const response = await fetch("http://localhost:4444/checkout", {
-			method: "POST",
-			headers: {
-				"content-type": "application/json",
-			},
-			body: JSON.stringify(jsonRPCRequest),
-		});
+    try {
+        const response = await fetch("http://localhost:4444/checkout", {
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+            },
+            body: JSON.stringify(jsonRPCRequest),
+        });
 
-		if (response.status === 200) {
-			const jsonRPCResponse = await response.json();
-			if (!jsonRPCResponse?.jsonrpc || !jsonRPCResponse?.id) throw new Error("Invalid JSON-RPC response");
-			return clientCheckout.receive(jsonRPCResponse);
-		} else if (jsonRPCRequest.id !== undefined) {
-			throw new Error(response.statusText);
-		}
-	} catch (error) {
-		throw new Error(error.message);
-	}
+        if (response.status === 200) {
+            const jsonRPCResponse = await response.json();
+            if (!jsonRPCResponse?.jsonrpc || !jsonRPCResponse?.id) throw new Error("Invalid JSON-RPC response");
+            return clientCheckout.receive(jsonRPCResponse);
+        } else if (jsonRPCRequest.id !== undefined) {
+            throw new Error(response.statusText);
+        }
+    } catch (error) {
+        throw new Error(error.message);
+    }
 });
 
-for (let i = 0; i < 1000; i++) {
-	clientCheckout
-		.timeout(20 * 1000, createTimeoutJSONRPCErrorResponse)
-		.request("checkout", { product_id: process.env.PRODUCT_ID })
-		.then((result) => console.log(result))
-		.catch((error) => console.error("Error: ", error));
+function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+for (let i = 0; i < 20000; i++) {
+    clientCheckout
+        .timeout(60 * 1000, createTimeoutJSONRPCErrorResponse)
+        .request("checkout", { product_id: Bun.env.DEFAULT_PRODUCT_ID })
+        .then((result) => console.log(result))
+        .catch((error) => console.error("Error: ", error));
 }

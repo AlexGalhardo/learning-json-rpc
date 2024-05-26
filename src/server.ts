@@ -1,6 +1,5 @@
 import express, { Request, Response } from "express";
 import bodyParser from "body-parser";
-import "dotenv/config";
 import jsonRPCServer from "./config/jsonRPCServer";
 
 const expressPostRequest = async (req: Request, res: Response) => {
@@ -18,6 +17,6 @@ express()
     .post("/signup", async (req, res) => expressPostRequest(req, res))
     .post("/login", async (req, res) => expressPostRequest(req, res))
     .post("/checkout", async (req, res) => expressPostRequest(req, res))
-    .listen(process.env.PORT || 4444, () =>
-        console.log(`\n\nJSON RPC SERVER listening on http://localhost:${process.env.PORT || 4444}\n\n`),
+    .listen(Bun.env.PORT || 4444, () =>
+        console.log(`\n\nJSON RPC SERVER listening on http://localhost:${Bun.env.PORT || 4444}\n\n`),
     );

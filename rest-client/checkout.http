@@ -1,0 +1,11 @@
+POST http://localhost:4444/checkout
+Content-Type: application/json
+
+{
+    "jsonrpc": "2.0",
+    "method": "checkout",
+    "params": {
+        "product_id": "91f2f7d6-4e3d-4ba3-b674-1168d0096755"
+    },
+    "id": 1
+}

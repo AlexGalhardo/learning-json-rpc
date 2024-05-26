@@ -19,7 +19,7 @@ const validateSignupSchema = Joi.object({
         .required(),
 }).required();
 
-export const validateSignupValidate = (data) => {
+export const validateSignupPayload = (data) => {
     const { value, error } = validateSignupSchema.validate(data, { abortEarly: false });
 
     if (error) throw new Error(error.message);
